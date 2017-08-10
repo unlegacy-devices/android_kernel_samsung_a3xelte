@@ -116,7 +116,7 @@ static void mdnie_update_sequence(struct mdnie_info *mdnie, struct mdnie_table *
 	return;
 }
 
-static void mdnie_update(struct mdnie_info *mdnie)
+void mdnie_update(struct mdnie_info *mdnie)
 {
 	struct mdnie_table *table = NULL;
 	struct mdnie_scr_info *scr_info = mdnie->tune->scr_info;
