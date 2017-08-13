@@ -142,6 +142,16 @@ static void notify_netlink_uevent(const char *iface, struct idletimer_tg *timer)
 		pr_err("message too long (%d)", res);
 		return;
 	}
+	
+	if (state) {
+		res = snprintf(uid_msg, NLMSG_MAX_SIZE, "UID=%u", timer->uid);
+		if (NLMSG_MAX_SIZE <= res)
+			pr_err("message too long (%d)", res);
+	} else {
+		res = snprintf(uid_msg, NLMSG_MAX_SIZE, "UID=");
+		if (NLMSG_MAX_SIZE <= res)
+			pr_err("message too long (%d)", res);
+	}
 
 	if (state) {
 		res = snprintf(uid_msg, NLMSG_MAX_SIZE, "UID=%u", timer->uid);
@@ -336,7 +346,7 @@ out:
 }
 
 static void reset_timer(const struct idletimer_tg_info *info,
-			struct sk_buff *skb)
+		struct sk_buff *skb)
 {
 	unsigned long now = jiffies;
 	struct idletimer_tg *timer = info->timer;
@@ -359,6 +369,7 @@ static void reset_timer(const struct idletimer_tg_info *info,
 				timer->uid = sk->sk_socket->file->f_cred->uid;
 			read_unlock_bh(&sk->sk_callback_lock);
 		}
+
 
 		/* checks if there is a pending inactive notification*/
 		if (timer->work_pending)
