@@ -171,7 +171,10 @@ CONFIG_PERF_USE_VMALLOC=y
 # Kernel Performance Events And Counters
 #
 CONFIG_PERF_EVENTS=y
+<<<<<<< HEAD:arch/arm64/configs/cyanogenmod_a3xelte_defconfig
 # CONFIG_DEBUG_PERF_USE_VMALLOC is not set
+=======
+>>>>>>> a5c00ea163d (arm64: defconfig: return PERF_EVENTS):arch/arm64/configs/lineageos_a3xelte_defconfig
 CONFIG_VM_EVENT_COUNTERS=y
 CONFIG_SLUB_DEBUG=y
 # CONFIG_COMPAT_BRK is not set
