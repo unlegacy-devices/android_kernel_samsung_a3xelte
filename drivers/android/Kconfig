@@ -10,6 +10,10 @@ if ANDROID
 config ANDROID_BINDER_IPC
 	bool "Android Binder IPC Driver"
 	depends on MMU
+
+config ANDROID_BINDER_IPC
+	bool "Android Binder IPC Driver"
+	depends on MMU && ANDROID
 	default n
 	---help---
 	  Binder is used in Android for both communication between processes,
@@ -33,5 +37,4 @@ config ANDROID_BINDER_IPC_32BIT
 	  Note that enabling this will break newer Android user-space.
 
 endif # if ANDROID
-
 endmenu
