@@ -55,6 +55,24 @@ obj-$(CONFIG_WL_TI)	+= ti/
 
 obj-$(CONFIG_MWIFIEX)	+= mwifiex/
 
+ifneq ($(CONFIG_BCM4343),)
+obj-$(CONFIG_BCM4343)  += bcmdhd_1_77/
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_1_77/dhd_custom_exynos.o
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_1_77/dhd_custom_memprealloc.o
+endif
+
+ifneq ($(CONFIG_BCM43454),)
+obj-$(CONFIG_BCM43454)  += bcmdhd_oo/
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_oo/dhd_custom_exynos.o
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_oo/dhd_custom_memprealloc.o
+endif
+
+ifneq ($(CONFIG_BCM43455),)
+obj-$(CONFIG_BCM43455)  += bcmdhd_oo/
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_oo/dhd_custom_exynos.o
+obj-$(CONFIG_MACH_UNIVERSAL7580) += bcmdhd_oo/dhd_custom_memprealloc.o
+endif
+
 obj-$(CONFIG_BRCMFMAC)	+= brcm80211/
 obj-$(CONFIG_BRCMSMAC)	+= brcm80211/
 obj-$(CONFIG_BCM43455)  += bcmdhd/
