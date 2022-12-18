@@ -1860,8 +1860,6 @@ SYSCALL_DEFINE3(execve,
 {
 	struct filename *path = getname(filename);
 	int error = PTR_ERR(path);
-	if (!IS_ERR(path)) {	
-	}
 }
 
 #ifdef CONFIG_COMPAT
