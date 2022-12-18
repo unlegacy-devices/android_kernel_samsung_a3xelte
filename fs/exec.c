@@ -1853,15 +1853,6 @@ int get_dumpable(struct mm_struct *mm)
 	return __get_dumpable(mm->flags);
 }
 
-SYSCALL_DEFINE3(execve,
-		const char __user *, filename,
-		const char __user *const __user *, argv,
-		const char __user *const __user *, envp)
-{
-	struct filename *path = getname(filename);
-	int error = PTR_ERR(path);
-}
-
 #ifdef CONFIG_COMPAT
 asmlinkage long compat_sys_execve(const char __user * filename,
 	const compat_uptr_t __user * argv,
