@@ -1853,6 +1853,46 @@ int get_dumpable(struct mm_struct *mm)
 	return __get_dumpable(mm->flags);
 }
 
+SYSCALL_DEFINE3(execve,
+		const char __user *, filename,
+		const char __user *const __user *, argv,
+		const char __user *const __user *, envp)
+{
+	struct filename *path = getname(filename);
+	int error = PTR_ERR(path);
+	if (!IS_ERR(path)) {
+#ifdef CONFIG_RKP_KDP
+		if(rkp_cred_enable){
+			rkp_call(RKP_CMDID(0x4b),(u64)path->name,0,0,0,0);
+		}
+#endif
+#if defined CONFIG_SEC_RESTRICT_FORK
+		if(CHECK_ROOT_UID(current)){
+			if(sec_restrict_fork()){
+				PRINT_LOG("Restricted making process. PID = %d(%s) "
+								"PPID = %d(%s)\n",
+				current->pid, current->comm,
+				current->parent->pid, current->parent->comm);
+				return -EACCES;
+			}
+		}
+#endif	// End of CONFIG_SEC_RESTRICT_FORK
+#ifdef CONFIG_RKP_KDP
+		if(CHECK_ROOT_UID(current) && rkp_cred_enable) {
+			if(rkp_restrict_fork()){
+				PRINT_LOG("RKP_KDP Restricted making process. PID = %d(%s) "
+								"PPID = %d(%s)\n",
+				current->pid, current->comm,
+				current->parent->pid, current->parent->comm);
+				return -EACCES;
+			}
+		}
+#endif
+		error = do_execve(path->name, argv, envp);
+		putname(path);
+	}
+	return error;
+}
 #ifdef CONFIG_COMPAT
 asmlinkage long compat_sys_execve(const char __user * filename,
 	const compat_uptr_t __user * argv,
