@@ -19,8 +19,6 @@
 
 #include <linux/vmm.h>
 
-#define vmm_ELF_PATH "init/vmm.elf"
-
 #define SMC_64BIT_RET_MAGIC 0xC2000401
 
 .global _vmm_goto_EL2
@@ -38,7 +36,6 @@ _vmm_disable:
 .section .vmm, "ax"
 .global _svmm
 _svmm:
-.incbin vmm_ELF_PATH
 .global _evmm
 _evmm:
 .section .text
