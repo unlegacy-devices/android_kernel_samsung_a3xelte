@@ -56,3 +56,4 @@ obj-$(CONFIG_VIDEO_EXYNOS_FIMC_IS) += fimc-is.o
 obj-$(CONFIG_OIS_USE)	+= fimc-is-device-ois.o
 obj-$(CONFIG_AF_HOST_CONTROL)	+= fimc-is-device-af.o
 obj-$(CONFIG_CAMERA_EEPROM_SUPPORT)	+= fimc-is-device-eeprom.o
+

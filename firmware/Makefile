@@ -147,7 +147,7 @@ else
 $(warning '$(TSPFIRMWARE_DIRECTORY)' directory dose not exist)
 endif
 
-TSPFIRMWARE_DIRECTORY = firmware/tsp_atmel
+TSPFIRMWARE_DIRECTORY = $(srctree)/firmware/tsp_atmel
 ifeq ($(shell test -d $(TSPFIRMWARE_DIRECTORY) && echo yes),yes)
 fw-shipped-$(CONFIG_TOUCHSCREEN_ATMEL_MXT2405) += tsp_atmel/mxt2405_gvlte_IL.fw \
 						tsp_atmel/mxt2405_gvlte_OF.fw \
@@ -158,7 +158,7 @@ else
 $(warning '$(TSPFIRMWARE_DIRECTORY)' directory dose not exist)
 endif
 
-TSPFIRMWARE_DIRECTORY = firmware/tsp_stm
+TSPFIRMWARE_DIRECTORY = $(srctree)/firmware/tsp_stm
 ifeq ($(shell test -d $(TSPFIRMWARE_DIRECTORY) && echo yes),yes)
 fw-shipped-$(CONFIG_TOUCHSCREEN_FTS) += tsp_stm/stm_s.fw tsp_stm/stm_t.fw tsp_stm/stm_tb.fw tsp_stm/stm_tb_integ.fw
 else

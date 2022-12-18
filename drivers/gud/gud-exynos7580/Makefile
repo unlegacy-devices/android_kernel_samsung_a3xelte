@@ -28,7 +28,7 @@ ccflags-$(CONFIG_MOBICORE_DEBUG) += -DDEBUG
 ccflags-$(CONFIG_MOBICORE_VERBOSE) += -DDEBUG_VERBOSE
 
 # Choose one platform from the folder
-MOBICORE_PLATFORM := $(shell (ls -1 $(GUD_ROOT_FOLDER)/MobiCoreDriver/platforms | tail -1) )
+MOBICORE_PLATFORM := $(shell (ls -1 $(srctree)/$(GUD_ROOT_FOLDER)/MobiCoreDriver/platforms | tail -1) )
 # Use the available platform folder
 ccflags-y += -I$(GUD_ROOT_FOLDER)/MobiCoreDriver/platforms/$(MOBICORE_PLATFORM)
 # MobiCore Driver includes
@@ -36,6 +36,8 @@ ccflags-y += -I$(GUD_ROOT_FOLDER)/MobiCoreDriver/public
 # MobiCore KernelApi required includes
 ccflags-y += -I$(GUD_ROOT_FOLDER)/MobiCoreKernelApi/include \
 		-I$(GUD_ROOT_FOLDER)/MobiCoreKernelApi/public
+# build_tag.h is in gud folder
+ccflags-y += -I$(GUD_ROOT_FOLDER)
 
 obj-$(CONFIG_SECURE_OS_CONTROL) += sec-os-ctrl/
 obj-$(CONFIG_SECURE_OS_BOOSTER_API) += sec-os-booster/
