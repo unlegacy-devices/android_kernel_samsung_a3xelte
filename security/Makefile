@@ -32,3 +32,9 @@ obj-$(CONFIG_INTEGRITY)			+= integrity/built-in.o
 # MST driver
 obj-$(CONFIG_MST_LDO)	  += mstdrv/
 
+# TIMA uevent 
+obj-$(CONFIG_TIMA)     += tima_uevent/tima_uevent.o
+
+# Knox SDP
+obj-$(CONFIG_SDP) += sdp/
+obj-$(CONFIG_SDP) += sdp/built-in.o
