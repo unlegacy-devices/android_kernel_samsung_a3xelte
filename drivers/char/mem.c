@@ -30,8 +30,8 @@
 #include <linux/io.h>
 #include <linux/aio.h>
 
-#ifdef CONFIG_KNOX_KAP
-#include <linux/knox_kap.h>
+#ifdef CONFIG_MST_LDO
+#include <linux/mst_ctrl.h>
 #endif
 
 #include <asm/uaccess.h>
