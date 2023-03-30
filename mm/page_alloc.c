@@ -2608,9 +2608,9 @@ rebalance:
 	 */
 
 #ifdef CONFIG_SEC_OOM_KILLER
-#define SHOULD_CONSIDER_OOM (!did_some_progress || time_after(jiffies, oom_invoke_timeout)) && (boot_mode != 2)
+#define SHOULD_CONSIDER_OOM (!did_some_progress || time_after(jiffies, oom_invoke_timeout))
 #else
-#define SHOULD_CONSIDER_OOM !did_some_progress && (boot_mode != 2)
+#define SHOULD_CONSIDER_OOM !did_some_progress
 #endif
 
 	if (SHOULD_CONSIDER_OOM) {
