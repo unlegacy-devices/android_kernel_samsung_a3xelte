@@ -11,15 +11,6 @@
  */
 #include <linux/battery/sec_battery.h>
 
-#ifdef CONFIG_LOWTEMP_VBAT_DROP_PREVENT
-#include <linux/pm_qos.h>
-#include <mach/cpufreq.h>
-
-static struct pm_qos_request boot_max_qos[CL_END];
-static int qos_max_class[CL_END] = {PM_QOS_CLUSTER0_FREQ_MAX, PM_QOS_CLUSTER1_FREQ_MAX};
-static int cluster_max_freq[CL_END] = {PM_QOS_CLUSTER0_FREQ_MAX_DEFAULT_VALUE, PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE};
-#endif
-
 const char *charger_chip_name;
 
 static struct device_attribute sec_battery_attrs[] = {
@@ -2921,7 +2912,7 @@ skip_monitor:
 	sec_bat_set_polling(battery);
 
 	if (battery->capacity <= 0 || battery->health_change)
-		wake_lock_timeout(&battery->monitor_wake_lock, HZ * wl_polling);
+		wake_lock_timeout(&battery->monitor_wake_lock, HZ * 5);
 	else
 		wake_unlock(&battery->monitor_wake_lock);
 
