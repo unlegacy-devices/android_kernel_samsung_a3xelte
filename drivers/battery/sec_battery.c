@@ -15,11 +15,6 @@
 #include <linux/pm_qos.h>
 #include <mach/cpufreq.h>
 
-#include <linux/moduleparam.h>
-
-static int wl_polling = 5;
-module_param(wl_polling, int, 0644);
-
 static struct pm_qos_request boot_max_qos[CL_END];
 static int qos_max_class[CL_END] = {PM_QOS_CLUSTER0_FREQ_MAX, PM_QOS_CLUSTER1_FREQ_MAX};
 static int cluster_max_freq[CL_END] = {PM_QOS_CLUSTER0_FREQ_MAX_DEFAULT_VALUE, PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE};
