@@ -431,7 +431,6 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	unsigned int type = button->type ?: EV_KEY;
 	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
 
-<<<<<<< HEAD
 	switch (button->code) {
 	case KEY_POWER:
 		printk(KERN_INFO "PWR key is %s\n", !!state ? "pressed" : "released");
@@ -448,29 +447,6 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	default:
 		printk(KERN_INFO "%d key is %s\n", button->code, !!state ? "pressed" : "released");
 		break;
-=======
-#if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
-	if ((button->code == KEY_POWER)) {
-		printk(KERN_INFO "GPIO-KEY : PWR key is %s[%d]\n",
-					state ? "pressed" : "released", irqd_is_wakeup_set(&desc->irq_data));
-	} else if ((button->code == KEY_HOMEPAGE)) {
-		printk(KERN_INFO "GPIO-KEY : HOME key is %s[%d]\n",
-					state ? "pressed" : "released", irqd_is_wakeup_set(&desc->irq_data));
-        	printk(KERN_INFO "GPIO-KEY: Sending KEY_WAKEUP (%s)", state ? "pressed" : "released");
-		if (state > 0) {
-			input_report_key(input, KEY_WAKEUP, 1);
-			input_sync(input);
-        	} else {
-			input_report_key(input, KEY_WAKEUP, 0);
-			input_sync(input);
-		}
-	} else if ((button->code == KEY_VOLUMEUP)) {
-		printk(KERN_INFO "GPIO-KEY : VOL_UP key is %s[%d]\n",
-					state ? "pressed" : "released", irqd_is_wakeup_set(&desc->irq_data));
-	} else if ((button->code == KEY_VOLUMEDOWN)) {
-		printk(KERN_INFO "GPIO-KEY : VOL_DOWN key is %s[%d]\n",
-					state ? "pressed" : "released", irqd_is_wakeup_set(&desc->irq_data));
->>>>>>> d496a6896b7 (gpio_keys: Report KEY_WAKEUP events on home button press)
 	}
 
 	if (type == EV_ABS) {
@@ -967,8 +943,6 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		dev_info(dev, "%s(%d) , gpio_val(%d)",
 			code_name ? code_name : "", bdata->button->code, gpio_get_value(bdata->button->gpio));
 	}
-
-	set_bit(KEY_WAKEUP, input->keybit);
 
 	return 0;
 
