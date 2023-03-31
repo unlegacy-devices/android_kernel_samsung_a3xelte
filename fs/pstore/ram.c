@@ -141,27 +141,6 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
 	return prz;
 }
 
-static void ramoops_read_kmsg_hdr(char *buffer, struct timespec *time,
-				  bool *compressed)
-{
-	char data_type;
-
-	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n",
-			&time->tv_sec, &time->tv_nsec, &data_type) == 3) {
-		if (data_type == 'C')
-			*compressed = true;
-		else
-			*compressed = false;
-	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu\n",
-			&time->tv_sec, &time->tv_nsec) == 2) {
-			*compressed = false;
-	} else {
-		time->tv_sec = 0;
-		time->tv_nsec = 0;
-		*compressed = false;
-	}
-}
-
 static bool prz_ok(struct persistent_ram_zone *prz)
 {
 	return !!prz && !!(persistent_ram_old_size(prz) +
@@ -170,8 +149,7 @@ static bool prz_ok(struct persistent_ram_zone *prz)
 
 static ssize_t ramoops_pstore_read(u64 *id, enum pstore_type_id *type,
 				   int *count, struct timespec *time,
-				   char **buf, bool *compressed,
-				   struct pstore_info *psi)
+				   char **buf, struct pstore_info *psi)
 {
 	ssize_t size;
 	ssize_t ecc_notice_size;
@@ -193,6 +171,10 @@ static ssize_t ramoops_pstore_read(u64 *id, enum pstore_type_id *type,
 	if (!prz_ok(prz))
 		return 0;
 
+	/* TODO(kees): Bogus time for the moment. */
+	time->tv_sec = 0;
+	time->tv_nsec = 0;
+
 	size = persistent_ram_old_size(prz);
 
 	/* ECC correction notice */
@@ -203,14 +185,12 @@ static ssize_t ramoops_pstore_read(u64 *id, enum pstore_type_id *type,
 		return -ENOMEM;
 
 	memcpy(*buf, persistent_ram_old(prz), size);
-	ramoops_read_kmsg_hdr(*buf, time, compressed);
 	persistent_ram_ecc_string(prz, *buf + size, ecc_notice_size + 1);
 
 	return size + ecc_notice_size;
 }
 
-static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
-				     bool compressed)
+static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz)
 {
 	char *hdr;
 	struct timespec timestamp;
@@ -221,9 +201,8 @@ static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
 		timestamp.tv_sec = 0;
 		timestamp.tv_nsec = 0;
 	}
-	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n",
-		(long)timestamp.tv_sec, (long)(timestamp.tv_nsec / 1000),
-		compressed ? 'C' : 'D');
+	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR "%lu.%lu\n",
+		(long)timestamp.tv_sec, (long)(timestamp.tv_nsec / 1000));
 	WARN_ON_ONCE(!hdr);
 	len = hdr ? strlen(hdr) : 0;
 	persistent_ram_write(prz, hdr, len);
@@ -235,8 +214,7 @@ static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
 static int notrace ramoops_pstore_write_buf(enum pstore_type_id type,
 					    enum kmsg_dump_reason reason,
 					    u64 *id, unsigned int part,
-					    const char *buf,
-					    bool compressed, size_t size,
+					    const char *buf, size_t size,
 					    struct pstore_info *psi)
 {
 	struct ramoops_context *cxt = psi->data;
@@ -287,7 +265,7 @@ static int notrace ramoops_pstore_write_buf(enum pstore_type_id type,
 
 	prz = cxt->przs[cxt->dump_write_cnt];
 
-	hlen = ramoops_write_kmsg_hdr(prz, compressed);
+	hlen = ramoops_write_kmsg_hdr(prz);
 	if (size + hlen > prz->buffer_size)
 		size = prz->buffer_size - hlen;
 	persistent_ram_write(prz, buf, size);
@@ -343,7 +321,6 @@ static void ramoops_free_przs(struct ramoops_context *cxt)
 {
 	int i;
 
-	cxt->max_dump_cnt = 0;
 	if (!cxt->przs)
 		return;
 
@@ -374,7 +351,7 @@ static int ramoops_init_przs(struct device *dev, struct ramoops_context *cxt,
 			     GFP_KERNEL);
 	if (!cxt->przs) {
 		dev_err(dev, "failed to initialize a prz array for dumps\n");
-		goto fail_prz;
+		return -ENOMEM;
 	}
 
 	for (i = 0; i < cxt->max_dump_cnt; i++) {
@@ -455,11 +432,13 @@ static int ramoops_probe(struct platform_device *pdev)
 		goto fail_out;
 	}
 
-	if (pdata->record_size && !is_power_of_2(pdata->record_size))
+	if (!is_power_of_2(pdata->mem_size))
+		pdata->mem_size = rounddown_pow_of_two(pdata->mem_size);
+	if (!is_power_of_2(pdata->record_size))
 		pdata->record_size = rounddown_pow_of_two(pdata->record_size);
-	if (pdata->console_size && !is_power_of_2(pdata->console_size))
+	if (!is_power_of_2(pdata->console_size))
 		pdata->console_size = rounddown_pow_of_two(pdata->console_size);
-	if (pdata->ftrace_size && !is_power_of_2(pdata->ftrace_size))
+	if (!is_power_of_2(pdata->ftrace_size))
 		pdata->ftrace_size = rounddown_pow_of_two(pdata->ftrace_size);
 	if (pdata->pmsg_size && !is_power_of_2(pdata->pmsg_size))
 		pdata->pmsg_size = rounddown_pow_of_two(pdata->pmsg_size);
