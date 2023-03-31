@@ -1856,7 +1856,7 @@ static ssize_t show_kernel_sysfs_gpu_model(struct kobject *kobj, struct kobj_att
 
 #if defined(CONFIG_EXYNOS_THERMAL) && defined(CONFIG_GPU_THERMAL)
 
-extern struct thermal_zone_device *gpu_thermal_device_ptr;
+struct thermal_zone_device *gpu_thermal_device_ptr;
 struct exynos_thermal_zone {
 	enum thermal_device_mode mode;
 	struct thermal_zone_device *therm_dev;
