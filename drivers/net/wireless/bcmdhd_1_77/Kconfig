@@ -193,6 +193,7 @@ config BCMDHD_PREALLOC_MEMDUMP
 config BCMDHD_OOB_HOST_WAKE
 	bool "Use the external WLAN_HOST_WAKE pin"
 	depends on BROADCOM_WIFI
+	default y
 	---help---
 	  Use the external GPIO pin to wake up host
 
