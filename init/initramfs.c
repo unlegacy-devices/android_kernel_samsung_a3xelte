@@ -18,7 +18,6 @@
 #include <linux/dirent.h>
 #include <linux/syscalls.h>
 #include <linux/utime.h>
-#include <linux/initramfs.h>
 
 static __initdata char *message;
 static void __init error(char *x)
